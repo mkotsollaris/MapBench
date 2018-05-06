@@ -35,7 +35,7 @@ config.tileLayer = {
 // this eventually gets passed down to the Filter component
 let subwayLineNames = [];
 
-class Map extends Component {
+class ReactMap extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -224,4 +224,4 @@ class Map extends Component {
   }
 }
 
-export default Map;
+export default ReactMap;
