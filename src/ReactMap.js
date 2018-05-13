@@ -36,7 +36,7 @@ config.tileLayer = {
 // this eventually gets passed down to the Filter component
 let subwayLineNames = [];
 
-class ReactMap extends Component {
+class LeafletMap extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -236,4 +236,4 @@ class ReactMap extends Component {
   }
 }
 
-export default ReactMap;
+export default LeafletMap;
