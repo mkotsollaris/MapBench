@@ -5,7 +5,7 @@ html, body {
   width: 100%;
 }
 #root, #map, #mapUI {
-  width: inherit;
+  width: 500px;
   height: inherit;
   background-color: #000;
 }

@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import L from 'leaflet';
+import React, { Component } from "react";
+import L from "leaflet";
 // postCSS import of Leaflet's CSS
-import 'leaflet/dist/leaflet.css';
+import "leaflet/dist/leaflet.css";
 // using webpack json loader we can import our geojson file like this
-import geojson from 'json!./bk_subway_entrances.geojson';
+import geojson from "json!./bk_subway_entrances.geojson";
 // import local components Filter
-import Filter from './Filter';
+import Filter from "./Filter";
 
 // store the map configuration properties in an object,
 // we could also move this to a separate file & import it if desired.
 let config = {};
 config.params = {
-  center: [40.655769,-73.938503],
+  center: [40.655769, -73.938503],
   zoomControl: false,
   zoom: 13,
   maxZoom: 19,
@@ -22,12 +22,13 @@ config.params = {
   attributionControl: true
 };
 config.tileLayer = {
-  uri: 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+  uri: "http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
   params: {
     minZoom: 11,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
-    id: '',
-    accessToken: ''
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    id: "",
+    accessToken: ""
   }
 };
 
@@ -43,7 +44,7 @@ class ReactMap extends Component {
       tileLayer: null,
       geojsonLayer: null,
       geojson: null,
-      subwayLinesFilter: '*',
+      subwayLinesFilter: "*",
       numEntrances: null
     };
     this._mapNode = null;
@@ -85,7 +86,7 @@ class ReactMap extends Component {
 
   getData() {
     // could also be an AJAX request that results in setting state with the geojson data
-    // for simplicity sake we are just importing the geojson data using webpack's json loader
+    // for simplicity sake we are just importing the geojson data using webpack's er
     this.setState({
       numEntrances: geojson.features.length,
       geojson
@@ -132,8 +133,8 @@ class ReactMap extends Component {
   zoomToFeature(target) {
     // pad fitBounds() so features aren't hidden under the Filter UI element
     var fitBoundsParams = {
-      paddingTopLeft: [200,10],
-      paddingBottomRight: [10,10]
+      paddingTopLeft: [200, 10],
+      paddingBottomRight: [10, 10]
     };
     // set the map's center & zoom so that it fits the geographic extent of the layer
     this.state.map.fitBounds(target.getBounds(), fitBoundsParams);
@@ -142,8 +143,10 @@ class ReactMap extends Component {
   filterFeatures(feature, layer) {
     // filter the subway entrances based on the map's current search filter
     // returns true only if the filter value matches the value of feature.properties.LINE
-    const test = feature.properties.LINE.split('-').indexOf(this.state.subwayLinesFilter);
-    if (this.state.subwayLinesFilter === '*' || test !== -1) {
+    const test = feature.properties.LINE
+      .split("-")
+      .indexOf(this.state.subwayLinesFilter);
+    if (this.state.subwayLinesFilter === "*" || test !== -1) {
       return true;
     }
   }
@@ -153,8 +156,8 @@ class ReactMap extends Component {
     // parameters to style the GeoJSON markers
     var markerParams = {
       radius: 4,
-      fillColor: 'orange',
-      color: '#fff',
+      fillColor: "orange",
+      color: "#fff",
       weight: 1,
       opacity: 0.5,
       fillOpacity: 0.8
@@ -164,23 +167,28 @@ class ReactMap extends Component {
   }
 
   onEachFeature(feature, layer) {
-    if (feature.properties && feature.properties.NAME && feature.properties.LINE) {
-
+    if (
+      feature.properties &&
+      feature.properties.NAME &&
+      feature.properties.LINE
+    ) {
       // if the array for unique subway line names has not been made, create it
       // there are 19 unique names total
       if (subwayLineNames.length < 19) {
-
         // add subway line name if it doesn't yet exist in the array
-        feature.properties.LINE.split('-').forEach(function(line, index){
+        feature.properties.LINE.split("-").forEach(function(line, index) {
           if (subwayLineNames.indexOf(line) === -1) subwayLineNames.push(line);
         });
 
         // on the last GeoJSON feature
-        if (this.state.geojson.features.indexOf(feature) === this.state.numEntrances - 1) {
+        if (
+          this.state.geojson.features.indexOf(feature) ===
+          this.state.numEntrances - 1
+        ) {
           // use sort() to put our values in alphanumeric order
           subwayLineNames.sort();
           // finally add a value to represent all of the subway lines
-          subwayLineNames.unshift('All lines');
+          subwayLineNames.unshift("All lines");
         }
       }
 
@@ -197,11 +205,14 @@ class ReactMap extends Component {
     if (this.state.map) return;
     // this function creates the Leaflet map object and is called after the Map component mounts
     let map = L.map(id, config.params);
-    L.control.zoom({ position: "bottomleft"}).addTo(map);
-    L.control.scale({ position: "bottomleft"}).addTo(map);
+    L.control.zoom({ position: "bottomleft" }).addTo(map);
+    L.control.scale({ position: "bottomleft" }).addTo(map);
 
     // a TileLayer is used as the "basemap"
-    const tileLayer = L.tileLayer(config.tileLayer.uri, config.tileLayer.params).addTo(map);
+    const tileLayer = L.tileLayer(
+      config.tileLayer.uri,
+      config.tileLayer.params
+    ).addTo(map);
 
     // set our state to include the tile layer
     this.setState({ map, tileLayer });
@@ -211,14 +222,15 @@ class ReactMap extends Component {
     const { subwayLinesFilter } = this.state;
     return (
       <div id="mapUI">
-        {
-          /* render the Filter component only after the subwayLines array has been created */
-          subwayLineNames.length &&
-            <Filter lines={subwayLineNames}
-              curFilter={subwayLinesFilter}
-              filterLines={this.updateMap} />
-        }
-        <div ref={(node) => this._mapNode = node} id="map" />
+        {/* render the Filter component only after the subwayLines array has been created */
+        subwayLineNames.length && (
+          <Filter
+            lines={subwayLineNames}
+            curFilter={subwayLinesFilter}
+            filterLines={this.updateMap}
+          />
+        )}
+        <div ref={node => (this._mapNode = node)} id="map" />
       </div>
     );
   }
